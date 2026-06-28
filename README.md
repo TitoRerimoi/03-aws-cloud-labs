@@ -1,5 +1,3 @@
-x
-# Cloud KijaniKiosk DevOps Labwork
+#KijaniKiosk DevOps Labwork
 
-This repository contains cloud practice and Git workflow notes
-This repository contains AWS, Git and Linux notes.
+This repo contains AWLS Labs, Git workflows and cloud notes.
