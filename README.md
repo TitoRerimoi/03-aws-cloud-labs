@@ -1,1 +1,4 @@
-This repository contains AWS, Git and Bash practice.
+
+#KijaniKiosk DevOps Labwork
+
+This repository contains AWS, Git, Bash, cloud notes and Git workflow practice.
