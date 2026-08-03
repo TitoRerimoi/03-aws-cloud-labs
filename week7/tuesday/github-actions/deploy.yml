@@ -1,0 +1,4 @@
+# Week 7 Reference
+# This contains the switch-traffic and auto-rollback jobs.
+# It should be inserted into the complete deploy.yml workflow
+# after the deploy-app job.
