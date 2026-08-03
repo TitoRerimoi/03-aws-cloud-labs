@@ -1,0 +1,26 @@
+post-deploy-monitor:
+  name: Post-deployment monitor
+  needs: [set-environment, switch-traffic]
+  if: needs.switch-traffic.result == 'success'
+  runs-on: [self-hosted, kijanikiosk-vpc]
+  environment: ${{ needs.set-environment.outputs.environment }}
+
+  steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.STAGING_SSH_PRIVATE_KEY }}" > ~/.ssh/kijanikiosk_staging
+        chmod 600 ~/.ssh/kijanikiosk_staging
+
+    - name: Run post-deployment monitor (120s confidence window)
+      run: |
+        ssh -i ~/.ssh/kijanikiosk_staging \
+          -o StrictHostKeyChecking=no \
+          ubuntu@$(terraform -chdir=infra output -raw api_server_public_ip) \
+          "sudo bash /opt/kijanikiosk/scripts/post-deploy-monitor.sh 120"
+
+    - name: Remove SSH key
+      if: always()
+      run: rm -f ~/.ssh/kijanikiosk_staging
