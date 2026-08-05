@@ -1,0 +1,36 @@
+# ---------- Stage 1 : Install dependencies ----------
+FROM node:18-alpine AS builder
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci --omit=dev
+
+COPY . .
+
+# ---------- Stage 2 : Production ----------
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Create non-root user
+RUN addgroup -S kijani && adduser -S kijani -G kijani
+
+# Install curl for Docker healthcheck
+RUN apk add --no-cache curl
+
+# Copy application
+COPY --from=builder /app /app
+
+# Change ownership
+RUN chown -R kijani:kijani /app
+
+USER kijani
+
+EXPOSE 5000
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+CMD curl -f http://localhost:5000/health || exit 1
+
+CMD ["node", "server.js"]
