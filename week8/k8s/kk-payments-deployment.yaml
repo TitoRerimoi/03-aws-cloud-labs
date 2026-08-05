@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: kk-payments-deployment
+  labels:
+    app: kk-payments
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: kk-payments
+
+  template:
+    metadata:
+      labels:
+        app: kk-payments
+
+    spec:
+      containers:
+        - name: kk-payments
+
+          image: kijanikiosk/kk-payments:1.0.0-41af4a9
+
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 5000
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 20
+            periodSeconds: 20
